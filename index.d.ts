@@ -1,4 +1,23 @@
-export function diff (originalObj: object, updatedObj: object): object
+type NonTraverse =
+    | Date
+    | Function
+    | RegExp
+    | boolean
+    | number
+    | string
+    | symbol
+export type DeepDiff<T> = T extends NonTraverse
+    ? T
+    : T extends (infer U)[]
+        ? { [x: number]: U | undefined }
+        : T extends Record<infer U, any>
+            ? { [K in U]?: DeepDiff<T[K]> }
+            : never
+
+export function diff<
+    T extends Record<PropertyKey, any>,
+    U extends Record<PropertyKey, any>,
+>(originalObj: T, updatedObj: U): DeepDiff<T & U>
 
 export function addedDiff (originalObj: object, updatedObj: object): object
 
